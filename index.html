@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard WebGIS Padi Majalengka 2023</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+body {
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+}
+
+/* HEADER */
+header {
+    background: linear-gradient(135deg, #64B5F6 0%, #42A5F5 100%);
+    color: white;
+    padding: 28px 32px;
+    box-shadow: 0 6px 25px rgba(66, 165, 245, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: headerFloat 8s ease-in-out infinite;
+}
+
+@keyframes headerFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40px, -40px) scale(1.1); }
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+header p {
+    margin-top: 10px;
+    font-size: 16px;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+}
+
+/* MAIN */
+.container {
+    display: flex;
+    height: calc(100% - 126px);
+    gap: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 340px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 28px;
+    border-right: 2px solid rgba(100, 181, 246, 0.2);
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(66, 165, 245, 0.15);
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(227, 242, 253, 0.5);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #81D4FA, #4FC3F7);
+    border-radius: 10px;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 20px;
+    color: #1565C0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar h3:not(:first-child) {
+    margin-top: 32px;
+}
+
+.info-box {
+    background: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #01579B;
+    border: 2px solid rgba(129, 212, 250, 0.3);
+    box-shadow: 0 4px 15px rgba(66, 165, 245, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.info-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menu button {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #81D4FA 0%, #4FC3F7 100%);
+    color: #01579B;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(79, 195, 247, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.menu button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.menu button:hover::before {
+    width: 350px;
+    height: 350px;
+}
+
+.menu button:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(79, 195, 247, 0.45);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.menu button.active {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(25, 118, 210, 0.5);
+    transform: translateX(8px) scale(1.02);
+}
+
+.menu button.active::after {
+    content: '✓';
+    margin-left: 10px;
+    font-size: 18px;
+    animation: checkBounce 0.5s ease;
+}
+
+@keyframes checkBounce {
+    0% { opacity: 0; transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* STATS CARDS */
+.stats-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #fff 0%, #E3F2FD 100%);
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(100, 181, 246, 0.3);
+    box-shadow: 0 4px 15px rgba(66, 165, 245, 0.15);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(66, 165, 245, 0.25);
+}
+
+.stat-card .label {
+    font-size: 13px;
+    color: #1976D2;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.stat-card .value {
+    font-size: 22px;
+    color: #1565C0;
+    font-weight: 700;
+}
+
+/* MAP AREA */
+.map-area {
+    flex: 1;
+    position: relative;
+    background: white;
+    margin: 20px;
+    margin-left: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(66, 165, 245, 0.25);
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* LOADING */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(66, 165, 245, 0.2);
+    border-top-color: #42A5F5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 20px;
+    color: #1976D2;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* FOOTER */
+footer {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    font-size: 12px;
+    color: #1976D2;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 10px 18px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(66, 165, 245, 0.25);
+    border: 2px solid rgba(129, 212, 250, 0.3);
+    font-weight: 600;
+}
+
+/* TOGGLE BUTTON */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 140px;
+    left: 20px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #64B5F6, #42A5F5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(66, 165, 245, 0.4);
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(66, 165, 245, 0.5);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        max-height: 50%;
+        border-right: none;
+        border-bottom: 2px solid rgba(100, 181, 246, 0.2);
+    }
+    
+    .map-area {
+        margin: 12px;
+    }
+    
+    header h1 {
+        font-size: 22px;
+    }
+    
+    header p {
+        font-size: 13px;
+    }
+    
+    .sidebar-toggle {
+        display: block;
+    }
+    
+    .sidebar.collapsed {
+        display: none;
+    }
+}
+</style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <header>
+   <h1 id="dashboard-title">Dashboard WebGIS Pertanian</h1>
+   <p id="dashboard-subtitle">Luas Panen dan Kontribusi Padi per Kecamatan di Kabupaten Majalengka Tahun 2023</p>
+  </header><button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="container"><!-- SIDEBAR -->
+   <aside class="sidebar" id="sidebar">
+    <h3><span id="about-title">📌 Tentang Peta</span></h3>
+    <div class="info-box"><span id="about-text">Dashboard ini menampilkan hasil analisis spasial luas panen padi dan kontribusinya terhadap total luas panen di Kabupaten Majalengka tahun 2023.</span>
+    </div>
+    <h3>📊 Statistik</h3>
+    <div class="stats-container">
+     <div class="stat-card">
+      <div class="label">
+       Total Kecamatan
+      </div>
+      <div class="value">
+       26
+      </div>
+     </div>
+     <div class="stat-card">
+      <div class="label">
+       Peta Tersedia
+      </div>
+      <div class="value">
+       2
+      </div>
+     </div>
+    </div>
+    <h3>🗺️ Pilih Peta</h3>
+    <div class="menu"><button id="btnLuas" class="active" onclick="showLuas()"> <span id="button-luas-text">📍 Luas Panen Padi</span> </button> <button id="btnKontribusi" onclick="showKontribusi()"> <span id="button-kontribusi-text">📈 Kontribusi Luas Panen</span> </button>
+    </div>
+    <h3><span id="info-title">ℹ️ Keterangan</span></h3>
+    <div class="info-box"><span id="info-text">Klik pada masing-masing kecamatan untuk melihat informasi detail melalui popup interaktif.</span>
+    </div>
+   </aside><!-- MAP -->
+   <main class="map-area">
+    <div class="loading-overlay" id="loadingOverlay">
+     <div class="spinner"></div>
+     <div class="loading-text">
+      Memuat peta...
+     </div>
+    </div><iframe id="mapFrame" src="https://aqiyahzh.github.io/Peta-Luas-Panen-Padi-per-Kecamatan-di-Kabupaten-Majalengka-Tahun-2023/#11/-6.8348/108.4683"> </iframe>
+    <footer>
+     🗺️ Dibuat dengan QGIS &amp; Leaflet (qgis2web)
+    </footer>
+   </main>
+  </div>
+  <script>
+const defaultConfig = {
+    dashboard_title: "Dashboard WebGIS Pertanian",
+    dashboard_subtitle: "Luas Panen dan Kontribusi Padi per Kecamatan di Kabupaten Majalengka Tahun 2023",
+    about_title: "📌 Tentang Peta",
+    about_text: "Dashboard ini menampilkan hasil analisis spasial luas panen padi dan kontribusinya terhadap total luas panen di Kabupaten Majalengka tahun 2023.",
+    button_luas_text: "📍 Luas Panen Padi",
+    button_kontribusi_text: "📈 Kontribusi Luas Panen",
+    info_title: "ℹ️ Keterangan",
+    info_text: "Klik pada masing-masing kecamatan untuk melihat informasi detail melalui popup interaktif.",
+    background_color: "#E3F2FD",
+    header_color: "#64B5F6",
+    sidebar_color: "#FFFFFF",
+    button_color: "#81D4FA",
+    button_active_color: "#1976D2"
+};
+
+async function onConfigChange(config) {
+    const title = config.dashboard_title || defaultConfig.dashboard_title;
+    const subtitle = config.dashboard_subtitle || defaultConfig.dashboard_subtitle;
+    const aboutTitle = config.about_title || defaultConfig.about_title;
+    const aboutText = config.about_text || defaultConfig.about_text;
+    const btnLuasText = config.button_luas_text || defaultConfig.button_luas_text;
+    const btnKontribusiText = config.button_kontribusi_text || defaultConfig.button_kontribusi_text;
+    const infoTitle = config.info_title || defaultConfig.info_title;
+    const infoText = config.info_text || defaultConfig.info_text;
+    const bgColor = config.background_color || defaultConfig.background_color;
+    const headerColor = config.header_color || defaultConfig.header_color;
+    const buttonColor = config.button_color || defaultConfig.button_color;
+    const buttonActiveColor = config.button_active_color || defaultConfig.button_active_color;
+    
+    document.getElementById('dashboard-title').textContent = title;
+    document.getElementById('dashboard-subtitle').textContent = subtitle;
+    document.getElementById('about-title').textContent = aboutTitle;
+    document.getElementById('about-text').textContent = aboutText;
+    document.getElementById('button-luas-text').textContent = btnLuasText;
+    document.getElementById('button-kontribusi-text').textContent = btnKontribusiText;
+    document.getElementById('info-title').textContent = infoTitle;
+    document.getElementById('info-text').textContent = infoText;
+    
+    document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${adjustColor(bgColor, -15)} 100%)`;
+    
+    const header = document.querySelector('header');
+    header.style.background = `linear-gradient(135deg, ${headerColor} 0%, ${adjustColor(headerColor, -10)} 100%)`;
+    
+    const buttons = document.querySelectorAll('.menu button:not(.active)');
+    buttons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${buttonColor} 0%, ${adjustColor(buttonColor, -10)} 100%)`;
+    });
+    
+    const activeButton = document.querySelector('.menu button.active');
+    if (activeButton) {
+        activeButton.style.background = `linear-gradient(135deg, ${buttonActiveColor} 0%, ${adjustColor(buttonActiveColor, -10)} 100%)`;
+    }
+}
+
+function adjustColor(color, percent) {
+    const num = parseInt(color.replace("#",""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+    const G = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amt));
+    const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+    return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
+function mapToCapabilities(config) {
+    return {
+        recolorables: [
+            {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                    config.background_color = value;
+                    if (window.elementSdk) {
+                        window.elementSdk.setConfig({ background_color: value });
+                    }
+                }
+            },
+            {
+                get: () => config.header_color || defaultConfig.header_color,
+                set: (value) => {
+                    config.header_color = value;
+                    if (window.elementSdk) {
+                        window.elementSdk.setConfig({ header_color: value });
+                    }
+                }
+            },
+            {
+                get: () => config.button_color || defaultConfig.button_color,
+                set: (value) => {
+                    config.button_color = value;
+                    if (window.elementSdk) {
+                        window.elementSdk.setConfig({ button_color: value });
+                    }
+                }
+            },
+            {
+                get: () => config.button_active_color || defaultConfig.button_active_color,
+                set: (value) => {
+                    config.button_active_color = value;
+                    if (window.elementSdk) {
+                        window.elementSdk.setConfig({ button_active_color: value });
+                    }
+                }
+            }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+    };
+}
+
+function mapToEditPanelValues(config) {
+    return new Map([
+        ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title],
+        ["dashboard_subtitle", config.dashboard_subtitle || defaultConfig.dashboard_subtitle],
+        ["about_title", config.about_title || defaultConfig.about_title],
+        ["about_text", config.about_text || defaultConfig.about_text],
+        ["button_luas_text", config.button_luas_text || defaultConfig.button_luas_text],
+        ["button_kontribusi_text", config.button_kontribusi_text || defaultConfig.button_kontribusi_text],
+        ["info_title", config.info_title || defaultConfig.info_title],
+        ["info_text", config.info_text || defaultConfig.info_text]
+    ]);
+}
+
+if (window.elementSdk) {
+    window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+    });
+}
+
+const mapFrame = document.getElementById('mapFrame');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const btnLuas = document.getElementById('btnLuas');
+const btnKontribusi = document.getElementById('btnKontribusi');
+
+function showLoading() {
+    loadingOverlay.classList.add('show');
+}
+
+function hideLoading() {
+    loadingOverlay.classList.remove('show');
+}
+
+mapFrame.addEventListener('load', hideLoading);
+
+function showLuas() {
+    showLoading();
+    mapFrame.src = "https://aqiyahzh.github.io/Peta-Luas-Panen-Padi-per-Kecamatan-di-Kabupaten-Majalengka-Tahun-2023/#11/-6.8348/108.4683";
+    btnLuas.classList.add("active");
+    btnKontribusi.classList.remove("active");
+    
+    const buttonColor = (window.elementSdk && window.elementSdk.config.button_color) || defaultConfig.button_color;
+    const buttonActiveColor = (window.elementSdk && window.elementSdk.config.button_active_color) || defaultConfig.button_active_color;
+    
+    btnKontribusi.style.background = `linear-gradient(135deg, ${buttonColor} 0%, ${adjustColor(buttonColor, -10)} 100%)`;
+    btnLuas.style.background = `linear-gradient(135deg, ${buttonActiveColor} 0%, ${adjustColor(buttonActiveColor, -10)} 100%)`;
+}
+
+function showKontribusi() {
+    showLoading();
+    mapFrame.src = "https://aqiyahzh.github.io/Peta-Kontribusi-Luas-Panen-Padi-per-Kecamatan-di-Kabupaten-Majalengka-Tahun-2023/#11/-6.8348/108.4683";
+    btnKontribusi.classList.add("active");
+    btnLuas.classList.remove("active");
+    
+    const buttonColor = (window.elementSdk && window.elementSdk.config.button_color) || defaultConfig.button_color;
+    const buttonActiveColor = (window.elementSdk && window.elementSdk.config.button_active_color) || defaultConfig.button_active_color;
+    
+    btnLuas.style.background = `linear-gradient(135deg, ${buttonColor} 0%, ${adjustColor(buttonColor, -10)} 100%)`;
+    btnKontribusi.style.background = `linear-gradient(135deg, ${buttonActiveColor} 0%, ${adjustColor(buttonActiveColor, -10)} 100%)`;
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('collapsed');
+}
+
+btnLuas.addEventListener('click', showLuas);
+btnKontribusi.addEventListener('click', showKontribusi);
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b283d4102d8fd33',t:'MTc2NjQ5Njg5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
